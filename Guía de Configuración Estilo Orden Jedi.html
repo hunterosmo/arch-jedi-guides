@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía Estilo Orden Jedi</title>
+    <style>
+        body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 2rem;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #66fcf1;
+        }
+        code {
+            background-color: #1f2833;
+            color: #66fcf1;
+            padding: 4px 6px;
+            display: block;
+            margin: 10px 0;
+            border-left: 4px solid #45a29e;
+            white-space: pre-wrap;
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌌 Guía de Configuración Estilo Orden Jedi</h1>
+
+    <div class="section">
+        <h2>1️⃣ Fondo de Pantalla con i3</h2>
+        <code>sudo pacman -S wget</code>
+        <code>mkdir -p ~/Pictures</code>
+        <code>wget -O ~/Pictures/nombre_que_le_imagen.jpg https://ruta-de-la-imagen.jpg</code>
+        <code>sudo pacman -S feh</code>
+        <code>feh --bg-fill ~/Picture/fondo_venator.jpg</code>
+        <p>Edita <code>~/.config/i3/config</code> y agrega:</p>
+        <code>exec_always --no-startup-id feh --bg-fill ~/Picture/fondo_venator.jpg</code>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Instalar Brave con yay</h2>
+        <code>yay -S brave-bin</code>
+        <code>Brave & disown</code>
+    </div>
+
+    <div class="section">
+        <h2>🧠 Instalar Starship</h2>
+        <code>yay -S starship</code>
+        <p>Agrega en <code>~/.bashrc</code>:</p>
+        <code>eval "$(starship init bash)"</code>
+        <code>source ~/.bashrc</code>
+    </div>
+
+    <div class="section">
+        <h2>😄 Emoji Fonts</h2>
+        <code>sudo pacman -S noto-fonts-emoji</code>
+    </div>
+
+    <div class="section">
+        <h2>🧑‍🚀 Configuración Starship Jedi</h2>
+        <code>mkdir -p ~/.config</code>
+        <code>nano ~/.config/starship.toml</code>
+        <p>Pega lo siguiente:</p>
+        <code>
+# 🌌 Estilo Galáctico Jedi - Minimalista y Dinámico
+add_newline = false
+format = "$all$username$hostname$character"
+
+[character]
+success_symbol = "[❯](bold bright-blue)"
+error_symbol = "[✗](bold red)"
+vicmd_symbol = "[❮](bold green)"
+
+[username]
+show_always = true
+style_user = "bold bright-yellow"
+style_root = "bold red"
+format = "[🧑‍🚀 $user]($style)"
+
+[hostname]
+style = "bright-blue"
+format = "[🚀 $hostname]($style) "
+
+[directory]
+style = "bold cyan"
+read_only = " 🔒"
+read_only_style = "red"
+truncation_length = 3
+truncate_to_repo = false
+home_symbol = "🏠"
+
+[git_branch]
+symbol = "🌿 "
+style = "bold green"
+
+[package]
+symbol = "📦 "
+style = "bold yellow"
+
+[python]
+symbol = "🐍 "
+style = "bold green"
+
+[memory_usage]
+disabled = false
+threshold = 75
+symbol = "💾 "
+style = "bold dimmed blue"
+format = "[$symbol$ram]($style) "
+        </code>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Instalación y uso de Rofi</h2>
+        <code>yay -Qs rofi</code>
+        <code>yay -S rofi</code>
+        <code>rofi -show drun</code>
+    </div>
+</body>
+</html>

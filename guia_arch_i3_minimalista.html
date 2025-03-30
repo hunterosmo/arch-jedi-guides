@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 Guía Minimalista: Arch Linux + i3</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1e1e2e;
+      color: #f4f4f4;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1,
+    h2 {
+      text-align: center;
+      color: #89dceb;
+    }
+
+    pre {
+      background: #313244;
+      color: #f4f4f4;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: left;
+    }
+
+    a {
+      color: #89b4fa;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🚀 Guía Minimalista: Arch Linux + i3 + kitty + yay</h1>
+
+  <h2>1. Arrancar desde la ISO</h2>
+  <ul>
+    <li>Descargar desde <a href="https://archlinux.org/download">archlinux.org</a></li>
+    <li>Boot desde USB o VM (modo BIOS/legacy activado)</li>
+  </ul>
+
+  <h2>2. Verifica el disco</h2>
+  <pre><code>lsblk</code></pre>
+
+  <h2>3. Crear particiones</h2>
+  <pre><code>cfdisk /dev/sda</code></pre>
+  <table>
+    <tr>
+      <th>Partición</th>
+      <th>Tamaño</th>
+      <th>Tipo</th>
+    </tr>
+    <tr>
+      <td>/dev/sda1</td>
+      <td>1 MB</td>
+      <td>BIOS Boot</td>
+    </tr>
+    <tr>
+      <td>/dev/sda2</td>
+      <td>90 GB</td>
+      <td>Linux filesystem</td>
+    </tr>
+    <tr>
+      <td>/dev/sda3</td>
+      <td>5 GB</td>
+      <td>Linux swap</td>
+    </tr>
+  </table>
+  <p><strong>⚠️ Importante:</strong> La partición <code>/dev/sda1</code> (BIOS Boot) no debe ser formateada ni montada.
+    Solo se necesita que exista para que GRUB se instale correctamente en modo BIOS.</p>
+
+  <h2>4. Formatear y montar</h2>
+  <pre><code>mkfs.ext4 /dev/sda2
+mkswap /dev/sda3
+swapon /dev/sda3
+
+mount /dev/sda2 /mnt</code></pre>
+
+  <h2>5. Instalar el sistema base</h2>
+  <pre><code>pacstrap -K /mnt base linux linux-firmware networkmanager</code></pre>
+
+  <h2>6. Generar fstab</h2>
+  <pre><code>genfstab -U /mnt >> /mnt/etc/fstab</code></pre>
+
+  <h2>7. Entrar al entorno chroot</h2>
+  <pre><code>arch-chroot /mnt</code></pre>
+
+  <h2>8. Configuración básica</h2>
+  <pre><code>ln -sf /usr/share/zoneinfo/America/Denver /etc/localtime
+hwclock --systohc</code></pre>
+
+  <h3>✍️ Si 'nano' no está disponible</h3>
+  <p>Primero instala nano:</p>
+  <pre><code>pacman -Sy nano</code></pre>
+  <p>Luego edita el archivo:</p>
+  <pre><code>nano /etc/locale.gen</code></pre>
+  <p>Descomenta: <code>es_MX.UTF-8 UTF-8</code></p>
+  <pre><code>locale-gen
+echo "LANG=es_MX.UTF-8" > /etc/locale.conf
+echo "KEYMAP=us" > /etc/vconsole.conf</code></pre>
+
+  <h2>9. Red y hostname</h2>
+  <pre><code>echo "archlinux" > /etc/hostname
+nano /etc/hosts</code></pre>
+  <pre><code>127.0.0.1   localhost
+::1         localhost
+127.0.1.1   archlinux.localdomain archlinux</code></pre>
+  <p>Después de guardar, ejecuta:</p>
+  <pre><code>systemctl enable NetworkManager</code></pre>
+
+  <h2>10. Usuario y sudo</h2>
+  <pre><code>useradd -m -G wheel joel
+passwd joel
+pacman -S sudo
+EDITOR=nano visudo</code></pre>
+  <p>Descomenta: <code>%wheel ALL=(ALL:ALL) ALL</code></p>
+
+  <h2>11. Instalar GRUB (modo BIOS)</h2>
+  <pre><code>pacman -S grub
+grub-install --target=i386-pc /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
+
+  <h2>12. Instalar i3, kitty y xorg</h2>
+  <pre><code>pacman -S xorg xorg-xinit i3-wm i3status i3lock dmenu kitty</code></pre>
+  <p>En <code>/home/joel</code>:</p>
+  <pre><code>echo "exec i3" > /home/joel/.xinitrc
+chown joel:joel /home/joel/.xinitrc</code></pre>
+
+  <h2>13. Iniciar i3 manualmente después de login</h2>
+  <p>Cuando inicies sesión como <code>joel</code>, ejecuta:</p>
+  <pre><code>startx</code></pre>
+
+  <h2>14. Instalar yay</h2>
+  <pre><code>pacman -S go base-devel git
+cd /home/joel
+git clone https://aur.archlinux.org/yay.git
+sudo chown -R joel:joel /home/joel/yay
+su - joel #usar este comando para salir del modo SU ya que no se instala en modo SU si no lo estas solo ignora esta linea
+cd /home/joel/yay
+cd yay
+makepkg -si</code></pre>
+
+  <h2>15. Finalizar</h2>
+  <pre><code>exit
+umount -R /mnt
+swapoff /dev/sda3
+reboot</code></pre>
+
+  <h2>🎉 ¡Listo! Arch + i3 + kitty + yay funcionando 🚀</h2>
+</body>
+
+</html>
